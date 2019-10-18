@@ -7,7 +7,8 @@ module.exports = {
       authenticate('jwt')
     ],
     find: [],
-    get: [],
+    get: [
+    ],
     create: [
       context => {
         if(context.data.product_name.trim() === '') {

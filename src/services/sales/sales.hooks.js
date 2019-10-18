@@ -1,4 +1,5 @@
 const { authenticate } = require('@feathersjs/authentication').hooks;
+const { populate } = require('feathers-hooks-common');
 
 module.exports = {
   before: {
@@ -19,7 +20,6 @@ module.exports = {
         if(context.data.qty.trim() === '' || context.data.qty.trim() === '0') {
           throw new Error("Product's Quantity can not be 0 or empty");
         }
-
         const productSales = context.data.product;
         const qtySales = context.data.qty;
 

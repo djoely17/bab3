@@ -8,8 +8,10 @@ module.exports = function (app) {
   const sales = new Schema({
     user: { type: Schema.Types.ObjectId, ref: "Users" },
     customer: { type: Schema.Types.ObjectId, ref: "Customers" },
-    product: { type: Schema.Types.ObjectId, ref: "Products" },
-    qty: { type: Number, required: true },
+    // listProduct: [{
+      product: { type: Schema.Types.ObjectId, ref: "Products" },
+      qty: { type: Number, required: true },
+    // }],
     createdAt: { type: Date, default: Date.Now }
   }, {
     timestamps: true
