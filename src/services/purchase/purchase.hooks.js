@@ -18,6 +18,12 @@ module.exports = {
         schema: {
           include: [
             {
+              service: 'profil',
+              nameAs: 'profil',
+              parentField: 'user',
+              childField: '_id'
+            },
+            {
               service: 'products',
               nameAs: 'product',
               parentField: 'product',

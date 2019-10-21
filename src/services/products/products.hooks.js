@@ -52,66 +52,7 @@ module.exports = {
   },
 
   after: {
-    all: [
-      // populate({
-      //   schema: {
-      //     include: [
-      //       {
-      //         service: 'distributors',
-      //         nameAs: 'distributor',
-      //         parentField: 'distributor',
-      //         childField: '_id',
-      //         query: {
-      //           $select: ['name']
-      //         }
-      //       },
-      //       {
-      //         service: 'purchase',
-      //         nameAs: 'purchase',
-      //         parentField: '_id',
-      //         childField: 'product',
-      //         query: {
-      //           $select: ['qty']
-      //         }
-      //       },
-      //       {
-      //         service: 'sales',
-      //         nameAs: 'sales',
-      //         parentField: '_id',
-      //         childField: 'product',
-      //         query: {
-      //           $select: ['qty']
-      //         }
-      //       }
-      //     ]
-      //   }
-      // }),
-      // async context => {
-      //   const result = context.result.data;
-
-      //   result.forEach( function(val) {
-      //     const purchase = val.purchase;
-      //     const sales = val.sales;
-
-      //     let stock = 0;
-      //     if (purchase!=null) {
-      //       purchase.forEach( function(val) { 
-      //         stock += val.qty;
-      //       })  
-      //     }
-
-      //     if (sales!=null) {
-      //       sales.forEach( function(val) { 
-      //         stock -= val.qty;
-      //       })  
-      //     }
-
-      //     val.stock = stock;
-      //   })
-
-      //   return context;
-      // }
-    ],
+    all: [],
     find: [
       populate({
         schema: {
@@ -148,27 +89,63 @@ module.exports = {
       }),
       async context => {
         const result = context.result.data;
+        
+        if (result!=null) {
+          result.forEach( function(val) {
+            const purchase = val.purchase;
+            const sales = val.sales;
 
-        result.forEach( function(val) {
-          const purchase = val.purchase;
-          const sales = val.sales;
+            let stock = 0;
+            if (purchase!=null) {
+              if (purchase.qty!=null) {
+                stock += purchase.qty;
+              } else {
+                purchase.forEach( function(val) { 
+                  stock += val.qty;
+                })  
+              }
+            };
+
+            if (sales!=null) {
+              if (sales.qty!=null) {
+                stock -= sales.qty;
+              } else {
+                sales.forEach( function(val) { 
+                  stock -= val.qty;
+                })  
+              }
+            };
+
+            val.stock = stock;
+          })
+          // return context;
+        } else {
+          const purchase = context.result.purchase;
+          const sales = context.result.sales;
 
           let stock = 0;
           if (purchase!=null) {
-            purchase.forEach( function(val) { 
-              stock += val.qty;
-            })  
-          }
+            if (purchase.qty!=null) {
+              stock += purchase.qty;
+            } else {
+              purchase.forEach( function(val) { 
+                stock += val.qty;
+              })  
+            }
+          };
 
           if (sales!=null) {
-            sales.forEach( function(val) { 
-              stock -= val.qty;
-            })  
-          }
+            if (sales.qty!=null) {
+              stock -= sales.qty;
+            } else {
+              sales.forEach( function(val) { 
+                stock -= val.qty;
+              })  
+            }
+          };
 
-          val.stock = stock;
-        })
-
+          context.result.stock = stock;
+        }
         return context;
       }
     ],
@@ -207,24 +184,64 @@ module.exports = {
         }
       }),
       async context => {
-        const purchase = context.result.purchase;
-        const sales = context.result.sales;
-
-        let stock = 0;
-        if (purchase!=null) {
-          purchase.forEach( function(val) { 
-            stock += val.qty;
-          })  
-        }
-
-        if (sales!=null) {
-          sales.forEach( function(val) { 
-            stock -= val.qty;
-          })  
-        }
-
-        context.result.stock = stock;
+        const result = context.result.data;
         
+        if (result!=null) {
+          result.forEach( function(val) {
+            const purchase = val.purchase;
+            const sales = val.sales;
+
+            let stock = 0;
+            if (purchase!=null) {
+              if (purchase.qty!=null) {
+                stock += purchase.qty;
+              } else {
+                purchase.forEach( function(val) { 
+                  stock += val.qty;
+                })  
+              }
+            };
+
+            if (sales!=null) {
+              if (sales.qty!=null) {
+                stock -= sales.qty;
+              } else {
+                sales.forEach( function(val) { 
+                  stock -= val.qty;
+                })  
+              }
+            };
+
+            val.stock = stock;
+          })
+          // return context;
+        } else {
+          const purchase = context.result.purchase;
+          const sales = context.result.sales;
+
+          let stock = 0;
+          if (purchase!=null) {
+            if (purchase.qty!=null) {
+              stock += purchase.qty;
+            } else {
+              purchase.forEach( function(val) { 
+                stock += val.qty;
+              })  
+            }
+          };
+
+          if (sales!=null) {
+            if (sales.qty!=null) {
+              stock -= sales.qty;
+            } else {
+              sales.forEach( function(val) { 
+                stock -= val.qty;
+              })  
+            }
+          };
+
+          context.result.stock = stock;
+        }
         return context;
       }
     ],

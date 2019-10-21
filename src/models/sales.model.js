@@ -8,7 +8,7 @@ module.exports = function (app) {
   const sales = new Schema({
     user: { type: Schema.Types.ObjectId, ref: "Users" },
     customer: { type: Schema.Types.ObjectId, ref: "Customers" },
-    // listProduct: [{
+    // list: [{
       product: { type: Schema.Types.ObjectId, ref: "Products" },
       qty: { type: Number, required: true },
     // }],
