@@ -1,5 +1,6 @@
 const { authenticate } = require('@feathersjs/authentication').hooks;
 const { populate } = require('feathers-hooks-common');
+const _ = require('lodash'); 
 
 module.exports = {
   before: {
@@ -14,50 +15,27 @@ module.exports = {
         if(context.data.customer.trim() === '') {
           throw new Error("Customer can not be empty");
         }
-        if(context.data.product.trim() === '') {
-          throw new Error("Product can not be empty");
-        }
-        if(context.data.qty.trim() === '' || context.data.qty.trim() === '0') {
-          throw new Error("Product's Quantity can not be 0 or empty");
-        }
 
-        // const list = context.data.list;
+        const product = await context.app.service('products').find();
+        const dataProduct = product.data;
+        const list = context.data.list;
+        let total = 0;
+        _.forEach(list, function(value, key) {
+          if(value.product.trim() === '') {
+            throw new Error("Product can not be empty");
+          }
+          if(value.qty.trim() === '' || value.qty.trim() === '0') {
+            throw new Error("Product's Quantity can not be 0 or empty");
+          }
 
-        // const product = context.app.service('products').get('5da3dcb32cd1a61130d73d2e');
-        //     throw new Error(JSON.stringify(product));
-
-        // list.forEach(
-        //   function(val){
-        //     if(val.product.trim() === '') {
-        //       throw new Error("Product can not be empty");
-        //     }
-        //     if(val.qty.trim() === '' || val.qty.trim() === '0') {
-        //       throw new Error("Quantity can not be 0 or empty");
-        //     }
-
-            
-
-        //     const stock = product.stock;
-        //     const productName = product.product_name;
-
-        //     if (stock < val.qty) { 
-        //       throw new Error("Not Enough Stock for "+ productName +". Remaining Stock is " + stock);
-        //     } 
-        //   }
-        // )
-
-        // throw new Error(JSON.stringify(list));
-
-        const productSales = context.data.product;
-        const qtySales = context.data.qty;
-
-        const product = await context.app.service('products').get(productSales);
-        const stock = product.stock;
-        const productName = product.product_name;
-
-        if (stock < qtySales) { 
-          throw new Error("Not Enough Stock for "+ productName +". Remaining Stock is " + stock);
-        } 
+          const checkProduct = _.find(dataProduct, function(o) { return o._id == value.product; }); 
+          if (checkProduct.stock < value.qty) { 
+            throw new Error("Not Enough Stock for "+ checkProduct.product_name +". Remaining Stock is " + checkProduct.stock);
+          } 
+          value.price = checkProduct.price;
+          total += (checkProduct.price * value.qty);
+        });
+        context.data.total = total;
       }
     ],
     update: [
@@ -68,23 +46,27 @@ module.exports = {
         if(context.data.customer.trim() === '') {
           throw new Error("Customer can not be empty");
         }
-        if(context.data.product.trim() === '') {
-          throw new Error("Product can not be empty");
-        }
-        if(context.data.qty.trim() === '' || context.data.qty.trim() === '0') {
-          throw new Error("Product's Quantity can not be 0 or empty");
-        }
 
-        const productSales = context.data.product;
-        const qtySales = context.data.qty;
+        const product = await context.app.service('products').find();
+        const dataProduct = product.data;
+        const list = context.data.list;
+        let total = 0;
+        _.forEach(list, function(value, key) {
+          if(value.product.trim() === '') {
+            throw new Error("Product can not be empty");
+          }
+          if(value.qty.trim() === '' || value.qty.trim() === '0') {
+            throw new Error("Product's Quantity can not be 0 or empty");
+          }
 
-        const product = await context.app.service('products').get(productSales);
-        const stock = product.stock;
-        const productName = product.product_name;
-
-        if (stock < qtySales) { 
-          throw new Error("Not Enough Stock for "+ productName +". Remaining Stock is " + stock);
-        } 
+          const checkProduct = _.find(dataProduct, function(o) { return o._id == value.product; }); 
+          if (checkProduct.stock < value.qty) { 
+            throw new Error("Not Enough Stock for "+ checkProduct.product_name +". Remaining Stock is " + checkProduct.stock);
+          } 
+          value.price = checkProduct.price;
+          total += (checkProduct.price * value.qty);
+        });
+        context.data.total = total; 
       }
     ],
     patch: [
@@ -95,23 +77,27 @@ module.exports = {
         if(context.data.customer.trim() === '') {
           throw new Error("Customer can not be empty");
         }
-        if(context.data.product.trim() === '') {
-          throw new Error("Product can not be empty");
-        }
-        if(context.data.qty.trim() === '' || context.data.qty.trim() === '0') {
-          throw new Error("Product's Quantity can not be 0 or empty");
-        }
 
-        const productSales = context.data.product;
-        const qtySales = context.data.qty;
+        const product = await context.app.service('products').find();
+        const dataProduct = product.data;
+        const list = context.data.list;
+        let total = 0;
+        _.forEach(list, function(value, key) {
+          if(value.product.trim() === '') {
+            throw new Error("Product can not be empty");
+          }
+          if(value.qty.trim() === '' || value.qty.trim() === '0') {
+            throw new Error("Product's Quantity can not be 0 or empty");
+          }
 
-        const product = await context.app.service('products').get(productSales);
-        const stock = product.stock;
-        const productName = product.product_name;
-
-        if (stock < qtySales) { 
-          throw new Error("Not Enough Stock for "+ productName +". Remaining Stock is " + stock);
-        } 
+          const checkProduct = _.find(dataProduct, function(o) { return o._id == value.product; }); 
+          if (checkProduct.stock < value.qty) { 
+            throw new Error("Not Enough Stock for "+ checkProduct.product_name +". Remaining Stock is " + checkProduct.stock);
+          } 
+          value.price = checkProduct.price;
+          total += (checkProduct.price * value.qty);
+        });
+        context.data.total = total;
       }
     ],
     remove: []
@@ -119,6 +105,24 @@ module.exports = {
 
   after: {
     all: [
+      async context => {
+        let result;
+        if (context.result.data===undefined) {
+          result = context.result;
+          _.forEach(result.list, function(value, key) {
+            value.totalItem = value.qty * value.price;
+          });
+        } else {
+          result = context.result.data;
+          _.forEach(result, function(value, key) {
+            const list = value.list;
+            _.forEach(list, function(value, key) {
+              value.totalItem = value.qty * value.price;
+            });
+          });
+        }
+        return context;
+      },
       populate({
         schema: {
           include: [
@@ -139,22 +143,10 @@ module.exports = {
               query: {
                 $select: ['name']
               }
-            },
-            {
-              service: 'products',
-              nameAs: 'product',
-              parentField: 'product',
-              childField: '_id',
-              query: {
-                $select: { 
-                  "product_name": ['product_name'],
-                  "price": ['price']
-                }
-              }
             }
           ]
         }
-      }),
+      })
     ],
     find: [],
     get: [],
