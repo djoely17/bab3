@@ -106,10 +106,15 @@ module.exports = {
   after: {
     all: [
       async context => {
+        const { Model } = context.app.service('products')
+        const listProduct = await Model.aggregate([ { $project: { name: '$product_name' } } ]);
+
         let result;
         if (context.result.data===undefined) {
           result = context.result;
           _.forEach(result.list, function(value, key) {
+            const checkProduct = _.find(listProduct, {'_id': value.product});
+            value.productName = checkProduct.name;
             value.totalItem = value.qty * value.price;
           });
         } else {
@@ -117,6 +122,8 @@ module.exports = {
           _.forEach(result, function(value, key) {
             const list = value.list;
             _.forEach(list, function(value, key) {
+              const checkProduct = _.find(listProduct, {'_id': value.product});  
+              value.productName = checkProduct.name;
               value.totalItem = value.qty * value.price;
             });
           });
