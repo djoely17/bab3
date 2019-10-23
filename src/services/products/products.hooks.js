@@ -72,7 +72,7 @@ module.exports = {
               parentField: '_id',
               childField: 'product',
               query: {
-                $select: ['qty']
+                $select: ['qty'] 
               }
             }
           ]
@@ -102,10 +102,9 @@ module.exports = {
           };
 
           const checkSales = _.find(listSales, {'_id': result._id});
-          stock -= checkSales.sales;
 
           result.sales = checkSales.sales;
-          result.stock = stock;
+          result.stock = stock - checkSales.sales;
         } else {
           result = context.result.data;
           result.forEach( function(val) {
@@ -123,10 +122,9 @@ module.exports = {
             };
 
             const checkSales = _.find(listSales, {'_id': val._id});
-            stock -= checkSales.sales;
 
             val.sales = checkSales.sales;
-            val.stock = stock;
+            val.stock = stock - checkSales.sales;
           })
         }
         return context;
