@@ -1,5 +1,6 @@
 const { authenticate } = require('@feathersjs/authentication').hooks;
 const { populate } = require('feathers-hooks-common');
+const _ = require('lodash'); 
 
 module.exports = {
   before: {
@@ -14,6 +15,24 @@ module.exports = {
 
   after: {
     all: [
+      async context => {
+        const { Model } = context.app.service('products')
+        const listProduct = await Model.aggregate([ { $project: { name: '$product_name' } } ]);
+
+        let result;
+        if (context.result.data===undefined) {
+          result = context.result;
+          const checkProduct = _.find(listProduct, {'_id': result.product});
+          result.productName = checkProduct.name;
+        } else {
+          result = context.result.data;
+          _.forEach(result, function(value, key) {
+            const checkProduct = _.find(listProduct, {'_id': value.product});  
+            value.productName = checkProduct.name;
+          });
+        }
+        return context;
+      },
       populate({
         schema: {
           include: [
@@ -21,13 +40,7 @@ module.exports = {
               service: 'profil',
               nameAs: 'profil',
               parentField: 'user',
-              childField: '_id'
-            },
-            {
-              service: 'products',
-              nameAs: 'product',
-              parentField: 'product',
-              childField: '_id'
+              childField: 'idUser'
             }
           ]
         }

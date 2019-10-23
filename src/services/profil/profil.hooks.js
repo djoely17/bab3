@@ -8,7 +8,7 @@ module.exports = {
     get: [],
     create: [
       async context => {
-        if(context.data._id.trim() === '') {
+        if(context.data.idUser.trim() === '') {
           throw new Error("ID User can not be empty");
         }
         if(context.data.name.trim() === '') {
@@ -19,15 +19,12 @@ module.exports = {
         }
         if(context.data.gender.trim() === '') {
           throw new Error(" Gender can not be empty");
-        }
-        if(context.data.role.trim() === '') {
-          throw new Error(" Role can not be empty");
         }
       }
     ],
     update: [
       async context => {
-        if(context.data._id.trim() === '') {
+        if(context.data.idUser.trim() === '') {
           throw new Error("ID User can not be empty");
         }
         if(context.data.name.trim() === '') {
@@ -38,15 +35,12 @@ module.exports = {
         }
         if(context.data.gender.trim() === '') {
           throw new Error(" Gender can not be empty");
-        }
-        if(context.data.role.trim() === '') {
-          throw new Error(" Role can not be empty");
         }
       }
     ],
     patch: [
       async context => {
-        if(context.data._id.trim() === '') {
+        if(context.data.idUser.trim() === '') {
           throw new Error("ID User can not be empty");
         }
         if(context.data.name.trim() === '') {
@@ -57,9 +51,6 @@ module.exports = {
         }
         if(context.data.gender.trim() === '') {
           throw new Error(" Gender can not be empty");
-        }
-        if(context.data.role.trim() === '') {
-          throw new Error(" Role can not be empty");
         }
       }
     ],
@@ -75,7 +66,7 @@ module.exports = {
             {
               service: 'users',
               nameAs: 'user',
-              parentField: '_id',
+              parentField: 'idUser',
               childField: '_id'
             }
           ]
@@ -89,7 +80,7 @@ module.exports = {
             {
               service: 'users',
               nameAs: 'user',
-              parentField: '_id',
+              parentField: 'idUser',
               childField: '_id'
             }
           ]

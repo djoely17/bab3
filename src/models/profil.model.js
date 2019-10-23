@@ -6,11 +6,10 @@ module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const profil = new Schema({
-    _id: { type: Schema.Types.ObjectId, ref: "Users" },
+    idUser: { type: Schema.Types.ObjectId, ref: "Users" },
     name: { type: String, required: true },
     idCard: { type: Number, required: true },
-    gender: { type: String, required: true },
-    role: { type: String, required: true }
+    gender: { type: String, required: true }
   }, {
     timestamps: true
   });

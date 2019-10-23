@@ -82,7 +82,7 @@ module.exports = {
         const { Model } = context.app.service('sales');
         const listSales = await Model.aggregate([ 
           { $unwind: '$list' },
-          { $project: { list: 1, product:1, idProduct: { product: '$list.product' } } },
+          { $project: { list: 1, product: 1, idProduct: { product: '$list.product' } } },
           { $group: { _id: '$list.product', sales: { $sum: '$list.qty' } } } ]);
 
         let result;
@@ -101,8 +101,7 @@ module.exports = {
             }
           };
 
-          const checkSales = _.find(listSales, {'_id': result._id});
-
+          const checkSales = _.find(listSales, { '_id': result._id });
           result.sales = checkSales.sales;
           result.stock = stock - checkSales.sales;
         } else {
@@ -122,7 +121,6 @@ module.exports = {
             };
 
             const checkSales = _.find(listSales, {'_id': val._id});
-
             val.sales = checkSales.sales;
             val.stock = stock - checkSales.sales;
           })
