@@ -102,8 +102,12 @@ module.exports = {
           };
 
           const checkSales = _.find(listSales, { '_id': result._id });
-          result.sales = checkSales.sales;
-          result.stock = stock - checkSales.sales;
+          if (checkSales===undefined) {
+            result.sales = 0;  
+          } else {
+            result.sales = checkSales.sales;
+          }
+          result.stock = stock - result.sales;
         } else {
           result = context.result.data;
           result.forEach( function(val) {
@@ -121,8 +125,12 @@ module.exports = {
             };
 
             const checkSales = _.find(listSales, {'_id': val._id});
-            val.sales = checkSales.sales;
-            val.stock = stock - checkSales.sales;
+            if (checkSales===undefined) {
+              val.sales = 0;  
+            } else {
+              val.sales = checkSales.sales;
+            }
+            val.stock = stock - val.sales;
           })
         }
         return context;

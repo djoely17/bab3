@@ -15,24 +15,24 @@ module.exports = {
 
   after: {
     all: [
-      async context => {
-        const { Model } = context.app.service('products')
-        const listProduct = await Model.aggregate([ { $project: { name: '$product_name' } } ]);
+      // async context => {
+      //   const { Model } = context.app.service('products')
+      //   const listProduct = await Model.aggregate([ { $project: { productName: '$product_name' } } ]);
 
-        let result;
-        if (context.result.data===undefined) {
-          result = context.result;
-          const checkProduct = _.find(listProduct, {'_id': result.product});
-          result.productName = checkProduct.name;
-        } else {
-          result = context.result.data;
-          _.forEach(result, function(value, key) {
-            const checkProduct = _.find(listProduct, {'_id': value.product});  
-            value.productName = checkProduct.name;
-          });
-        }
-        return context;
-      },
+      //   let result;
+      //   if (context.result.data===undefined) {
+      //     result = context.result;
+      //     const checkProduct = _.find(listProduct, {'_id': result.product});
+      //     result.productName = checkProduct.productName;
+      //   } else {
+      //     result = context.result.data;
+      //     _.forEach(result, function(value, key) {
+      //       const checkProduct = _.find(listProduct, {'_id': value.product});  
+      //       value.productName = checkProduct.productName;
+      //     });
+      //   }
+      //   return context;
+      // },
       populate({
         schema: {
           include: [
@@ -41,6 +41,15 @@ module.exports = {
               nameAs: 'profil',
               parentField: 'user',
               childField: 'idUser'
+            },
+            {
+              service: 'products',
+              nameAs: 'product',
+              parentField: 'product',
+              childField: '_id',
+              query:{
+                $select: ['product_name']
+              }
             }
           ]
         }
