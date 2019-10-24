@@ -1,4 +1,5 @@
 const { authenticate } = require('@feathersjs/authentication').hooks;
+const { populate } = require('feathers-hooks-common');
 
 const {
   hashPassword, protect
@@ -19,7 +20,21 @@ module.exports = {
     all: [ 
       // Make sure the password field is never sent to the client
       // Always must be the last hook
-      protect('password')
+      protect('password'),
+      
+      populate({
+        schema: {
+          include: [
+            {
+              service: 'profil',
+              nameAs: 'profil',
+              parentField: '_id',
+              childField: 'idUser'
+            }
+          ]
+        }
+      })
+    
     ],
     find: [],
     get: [],

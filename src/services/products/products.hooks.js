@@ -124,7 +124,7 @@ module.exports = {
               }
             };
 
-            const checkSales = _.find(listSales, {'_id': val._id});
+            const checkSales = _.find(listSales, { '_id': val._id});
             if (checkSales===undefined) {
               val.sales = 0;  
             } else {
