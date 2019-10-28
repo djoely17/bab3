@@ -60,32 +60,32 @@ module.exports = {
   after: {
     all: [],
     find: [
-      populate({
-        schema: {
-          include: [
-            {
-              service: 'users',
-              nameAs: 'user',
-              parentField: 'idUser',
-              childField: '_id'
-            }
-          ]
-        }
-      })
+      // populate({
+      //   schema: {
+      //     include: [
+      //       {
+      //         service: 'users',
+      //         nameAs: 'user',
+      //         parentField: 'idUser',
+      //         childField: '_id'
+      //       }
+      //     ]
+      //   }
+      // })
     ],
     get: [
-      populate({
-        schema: {
-          include: [
-            {
-              service: 'users',
-              nameAs: 'user',
-              parentField: 'idUser',
-              childField: '_id'
-            }
-          ]
-        }
-      })
+      // populate({
+      //   schema: {
+      //     include: [
+      //       {
+      //         service: 'users',
+      //         nameAs: 'user',
+      //         parentField: 'idUser',
+      //         childField: '_id'
+      //       }
+      //     ]
+      //   }
+      // })
     ],
     create: [],
     update: [],

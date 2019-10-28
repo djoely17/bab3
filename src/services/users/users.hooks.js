@@ -22,18 +22,18 @@ module.exports = {
       // Always must be the last hook
       protect('password'),
       
-      populate({
-        schema: {
-          include: [
-            {
-              service: 'profil',
-              nameAs: 'profil',
-              parentField: '_id',
-              childField: 'idUser'
-            }
-          ]
-        }
-      })
+      // populate({
+      //   schema: {
+      //     include: [
+      //       {
+      //         service: 'profil',
+      //         nameAs: 'profil',
+      //         parentField: '_id',
+      //         childField: 'idUser'
+      //       }
+      //     ]
+      //   }
+      // })
     
     ],
     find: [],

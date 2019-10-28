@@ -14,18 +14,24 @@ module.exports = {
 
   after: {
     all: [
-      populate({
-        schema: {
-          include: [
-            {
-              service: 'products',
-              nameAs: 'product',
-              parentField: '_id',
-              childField: 'distributor'
-            }
-          ]
-        }
-      })
+      // populate({
+      //   schema: {
+      //     include: [
+      //       {
+      //         service: 'products',
+      //         nameAs: 'product',
+      //         parentField: '_id',
+      //         childField: 'distributor',
+      //         query: {
+      //           $select: { 
+      //             product_name: ['product_name'], 
+      //             price: ['price'] 
+      //           }
+      //         }
+      //       }
+      //     ]
+      //   }
+      // })
     ],
     find: [],
     get: [],

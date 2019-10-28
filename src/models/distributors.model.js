@@ -6,7 +6,7 @@ module.exports = function (app) {
   const mongooseClient = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const distributors = new Schema({
-    name: { type: String, required: true },
+    name: { type: String, required: [ true, "Distributor's Name is required"] },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
   }, {
