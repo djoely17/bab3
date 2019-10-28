@@ -24,11 +24,7 @@ exports.ProductDistributor = class ProductDistributor {
                                           {
                                             $match: { 
                                               $expr: {
-                                                $and: [
-                                                  { 
-                                                    $eq: ['$distributor', '$$id'] 
-                                                  }
-                                                ]
+                                                $eq: ['$distributor', '$$id'] 
                                               }
                                             }
                                           }
@@ -44,7 +40,7 @@ exports.ProductDistributor = class ProductDistributor {
                                     }
                                   ]);
     
-    // const data1 = await this.app.service('distributors').find({ query: { $populate: { path: "distributor", model: Product, as: "product" } } });
+    // const data1 = await this.app.service('distributors').find({ query: { $populate: { path: "distributor", model: "products", as: "product" } } });
     return data;
   }
 
@@ -52,34 +48,31 @@ exports.ProductDistributor = class ProductDistributor {
     const ObjectId = require('mongoose').Types.ObjectId;
     const distributor = this.app.service('distributors').Model;
     const data = await distributor
-                       .aggregate([ 
-                                    { $match: { "_id": ObjectId(id) } },
-                                    { 
-                                      $lookup: {
-                                        from: "products",
-                                        as: "daftarProduct",
-                                        let: { "id": '$_id' },
-                                        pipeline: [
-                                          {
-                                            $match: {
-                                              $expr: {
-                                                $and: [
-                                                  { $eq: ['$distributor', '$$id'] }
-                                                ]
-                                              }
+                       .aggregate([{ $match: { "_id": ObjectId(id) } },
+                                  { 
+                                    $lookup: {
+                                      from: "products",
+                                      as: "daftarProduct",
+                                      let: { "id": '$_id' },
+                                      pipeline: [
+                                        {
+                                          $match: {
+                                            $expr: {
+                                              $eq: ['$distributor', '$$id'] 
                                             }
                                           }
-                                        ]
-                                      },  
-                                    },
-                                    {
-                                      $project: { 
-                                        _id: "$_id",
-                                        name: "$name",
-                                        daftarProduct: "$daftarProduct"
-                                      }
+                                        }
+                                      ]
+                                    },  
+                                  },
+                                  {
+                                    $project: { 
+                                      _id: "$_id",
+                                      name: "$name",
+                                      daftarProduct: "$daftarProduct"
                                     }
-                                  ]);
+                                  }
+                                ]);
     
     // const data1 = await this.app.service('distributors').find({ query: { $populate: { path: "distributor", model: Product, as: "product" } } });
     return data;
