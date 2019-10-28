@@ -1,7 +1,4 @@
 /* eslint-disable no-unused-vars */
-const Service = require('feathers-mongoose');
-const populate = require('feathers-hooks-common');
-
 exports.ProductDistributor = class ProductDistributor {
   constructor (options) {
     this.options = options || {};
@@ -14,31 +11,30 @@ exports.ProductDistributor = class ProductDistributor {
   async find (params) {
     const distributor = this.app.service('distributors').Model;
     const data = await distributor
-                       .aggregate([ 
-                                    { 
-                                      $lookup: {
-                                        from: "products",
-                                        as: "daftarProduct",
-                                        let: { "id": '$_id' },
-                                        pipeline: [
-                                          {
-                                            $match: { 
-                                              $expr: {
-                                                $eq: ['$distributor', '$$id'] 
-                                              }
+                       .aggregate([{ 
+                                    $lookup: {
+                                      from: "products",
+                                      as: "daftarProduct",
+                                      let: { "id": '$_id' },
+                                      pipeline: [
+                                        {
+                                          $match: { 
+                                            $expr: {
+                                              $eq: ['$distributor', '$$id'] 
                                             }
                                           }
-                                        ]
-                                      },  
-                                    },
-                                    {
-                                      $project: { 
-                                        _id: "$_id",
-                                        name: "$name",
-                                        daftarProduct: "$daftarProduct"
-                                      }
+                                        }
+                                      ]
+                                    },  
+                                  },
+                                  {
+                                    $project: { 
+                                      _id: "$_id",
+                                      name: "$name",
+                                      daftarProduct: "$daftarProduct"
                                     }
-                                  ]);
+                                  }
+                                ]);
     
     // const data1 = await this.app.service('distributors').find({ query: { $populate: { path: "distributor", model: "products", as: "product" } } });
     return data;

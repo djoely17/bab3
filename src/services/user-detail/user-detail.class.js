@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
-const Service = require('feathers-mongoose');
-const populate = require('feathers-hooks-common');
+const _ = require('lodash'); 
 
 exports.UserDetail = class UserDetail {
   constructor (options) {
@@ -12,73 +11,33 @@ exports.UserDetail = class UserDetail {
   }
 
   async find (params) {
-    const ObjectId = require('mongoose').Types.ObjectId;
-    const userList = this.app.service('users').Model;
-    const data = await userList
-                       .aggregate([{ 
-                                    $lookup: {
-                                      from: "profil",
-                                      as: "profilUser",
-                                      let: { "id": '$_id' },
-                                      pipeline: [
-                                        {
-                                          $match: {
-                                            $expr: {
-                                              $eq: ['$idUser', '$$id'] 
-                                            }
-                                          }
-                                        }
-                                      ]
-                                    },  
-                                  },
-                                  {
-                                    $project: { 
-                                      _id: "$_id",
-                                      email: "$email",
-                                      role: "$role",
-                                      profilUser: "$profilUser"
-                                    }
-                                  }
-                                ]);
-    
-    // const data1 = await this.app.service('distributors').find({ query: { $populate: { path: "distributor", model: 'product', as: "product" } } });
-    return data;
+    const users = await this.app.service('users').find({ });
+    const profil = await this.app.service('profil').find({ });
+
+    users.data.forEach( function(val) {
+      const checkProfil = _.find(profil.data, { 'idUser': val._id});
+      if (checkProfil===undefined) {
+        val.profil = null;  
+      } else {
+        val.profil = checkProfil;
+      }
+    })
+
+    return users;
   }
 
   async get (id, params) {
-    const ObjectId = require('mongoose').Types.ObjectId;
-    const distributor = this.app.service('users').Model;
-    const data = await distributor
-                       .aggregate([{ $match: { "_id": ObjectId(id) } },
-                                  { 
-                                    $lookup: {
-                                      from: "profil",
-                                      as: "profil",
-                                      let: { "id": '$_id' },
-                                      pipeline: [
-                                        {
-                                          $match: { 
-                                            $expr: {
-                                              $and: [ 
-                                                { $eq: ["$_id", "$$id"] }
-                                              ]
-                                            }
-                                          }
-                                        }
-                                      ]
-                                    },  
-                                  },
-                                  {
-                                    $project: { 
-                                      _id: "$_id",
-                                      email: "$email",
-                                      role: "$role",
-                                      profilUser: "$profil"
-                                    }
-                                  }
-                                ]);
-    
-    return data;
+    const users = await this.app.service('users').get(id);
+    const profil = await this.app.service('profil').find({ });
+
+    const checkProfil = _.find(profil.data, { 'idUser': users._id});
+    if (checkProfil===undefined) {
+      users.profil = null;  
+    } else {
+      users.profil = checkProfil;
+    }
+
+    return users;
   }
 
   async create (data, params) {
